@@ -86,6 +86,9 @@ class RoadCondition implements DataSourceAwareInterface{
       return $id;
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
+      echo "</pre>";
       throw new Exception("Can't create road condition entry");
     }
   }

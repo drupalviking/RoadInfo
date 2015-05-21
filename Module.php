@@ -74,7 +74,13 @@ class Module
 				},
 			),
 			'invokables' => [
-				//'RoadInfo\Service\News' 		=> 'RoadInfo\Service\News',
+				'RoadInfo\Service\Condition' 		=> 'RoadInfo\Service\Condition',
+				'RoadInfo\Service\RoadCondition' 		=> 'RoadInfo\Service\RoadCondition',
+				'RoadInfo\Service\Route' 		=> 'RoadInfo\Service\Route',
+				'RoadInfo\Service\Segment' 		=> 'RoadInfo\Service\Segment',
+				'RoadInfo\Service\Sign' 		=> 'RoadInfo\Service\Sign',
+				'RoadInfo\Service\User' 		=> 'RoadInfo\Service\User',
+				'RoadInfo\Service\XMLStream' 		=> 'RoadInfo\Service\XMLStream',
 			],
 			'factories' => array(
 				'Logger' => function ($sm) {

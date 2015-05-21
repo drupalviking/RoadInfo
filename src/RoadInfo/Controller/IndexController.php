@@ -10,6 +10,7 @@
 namespace RoadInfo\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\FeedModel;
 
@@ -31,7 +32,7 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         //SERVICES
-        //  load all services
+        $sm = $this->getServiceLocator();
 
         return new ViewModel();
     }

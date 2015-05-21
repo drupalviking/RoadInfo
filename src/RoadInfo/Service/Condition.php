@@ -29,13 +29,14 @@ class Condition implements DataSourceAwareInterface{
   public function get($id){
     try{
       $statement = $this->pdo->prepare("
-        SELECT * FROM Condition
+        SELECT * FROM `Condition`
         WHERE id = :id
       ");
 
       $statement->execute(array(
-        'id' => $id
+        'id' => (int)$id
       ));
+
       $condition = $statement->fetchObject();
 
       if(!$condition){
@@ -45,6 +46,8 @@ class Condition implements DataSourceAwareInterface{
       return $condition;
     }
     catch( PDOException $e ){
+      //echo "<pre>";
+      //print_r($e->getMessage());
       throw new Exception("Can't get Condition item [{$id}]", 0, $e);
     }
   }
@@ -57,7 +60,7 @@ class Condition implements DataSourceAwareInterface{
   public function fetchAll(){
     try{
       $statement = $this->pdo->prepare("
-        SELECT * FROM Condition
+        SELECT * FROM `Condition
         ORDER BY condition ASC
       ");
 
@@ -86,6 +89,8 @@ class Condition implements DataSourceAwareInterface{
       return $id;
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
       throw new Exception("Can't create condition entry");
     }
   }

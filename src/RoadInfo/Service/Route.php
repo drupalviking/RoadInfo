@@ -50,6 +50,35 @@ class Route implements DataSourceAwareInterface{
   }
 
   /**
+   * Gets one route by id
+   *
+   * @param $id
+   * @return bool|mixed
+   */
+  public function getByShortName($short_name){
+    try{
+      $statement = $this->pdo->prepare("
+        SELECT * FROM Route
+        WHERE short_name = :short_name
+      ");
+
+      $statement->execute(array(
+        'short_name' => $short_name
+      ));
+      $route = $statement->fetchObject();
+
+      if(!$route){
+        return false;
+      }
+
+      return $route;
+    }
+    catch( PDOException $e ){
+      throw new Exception("Can't get Route item [{$short_name}]", 0, $e);
+    }
+  }
+
+  /**
    * Gets all routes
    *
    * @return array
