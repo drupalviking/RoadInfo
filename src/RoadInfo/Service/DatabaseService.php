@@ -1,6 +1,6 @@
 <?php
 
-namespace FlightInfo\Service;
+namespace RoadInfo\Service;
 
 
 trait DatabaseService

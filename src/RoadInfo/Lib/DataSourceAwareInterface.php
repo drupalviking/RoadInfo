@@ -6,7 +6,7 @@
  * Time: 10:39
  */
 
-namespace Flightinfo\Lib;
+namespace RoadInfo\Lib;
 
 /**
  * Interface to allow object to connect to database.
