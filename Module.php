@@ -94,17 +94,8 @@ class Module
 					return $log;
 				},
 				'ServiceEventManager' => function ($sm) {
-
 						$logger = $sm->get('Logger');
 						$manager = new EventManager();
-
-						$manager->attach(new ErrorEventListener($logger));
-						$manager->attach(new ServiceEventListener($logger));
-						$activityListener = new ActivityListener($logger);
-						$activityListener->setQueueConnectionFactory(
-							$sm->get('RoadInfo\Lib\QueueConnectionFactory')
-						);
-						$manager->attach($activityListener);
 
 						return $manager;
 				},
