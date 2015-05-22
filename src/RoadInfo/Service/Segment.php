@@ -29,7 +29,7 @@ class Segment implements DataSourceAwareInterface{
   public function get($id){
     try{
       $statement = $this->pdo->prepare("
-        SELECT * FROM Segment
+        SELECT * FROM `Segment`
         WHERE id = :id
       ");
 
@@ -57,8 +57,8 @@ class Segment implements DataSourceAwareInterface{
   public function fetchAll(){
     try{
       $statement = $this->pdo->prepare("
-        SELECT * FROM Segment
-        ORDER BY short_name ASC
+        SELECT * FROM `Segment`
+        ORDER BY name_short ASC
       ");
 
       $statement->execute();
@@ -66,6 +66,8 @@ class Segment implements DataSourceAwareInterface{
       return $statement->fetchAll();
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
       throw new Exception("Can't get segments");
     }
   }

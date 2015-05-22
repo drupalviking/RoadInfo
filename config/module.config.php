@@ -14,18 +14,67 @@ return array(
 		'cookie_httponly' => true,
 	),
     'router' => array(
-        'routes' => array(
-            'home' => array(
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => array(
-                    'route'    => '/',
-                    'defaults' => array(
-                        'controller' => 'RoadInfo\Controller\Index',
-                        'action'     => 'index',
-                    ),
-                ),
+      'routes' => array(
+        'home' => array(
+          'type' => 'Zend\Mvc\Router\Http\Literal',
+          'options' => array(
+            'route'    => '/',
+            'defaults' => array(
+              'controller' => 'RoadInfo\Controller\Index',
+              'action'     => 'index',
             ),
+          ),
         ),
+        'segment' => array(
+          'type' => 'Zend\Mvc\Router\Http\Literal',
+          'options' => array(
+            'route' => '/segment',
+            'defaults' => array(
+              'controller' => 'RoadInfo\Controller\Segment',
+              'action' => 'list'
+            ),
+          ),
+          'may_terminate' => true,
+          'child_routes' => array(
+            'index' => array(
+              'type' => 'Zend\Mvc\Router\Http\Segment',
+              'options' => array(
+                'route' => '/:id',
+                'constraints' => array(
+                  'id' => '[0-9]*',
+                ),
+                'defaults' => array(
+                  'controller' => 'RoadInfo\Controller\Segment',
+                  'action' => 'index'
+                ),
+              )
+            ),
+            'list' => array(
+              'type' => 'Zend\Mvc\Router\Http\Segment',
+              'options' => array(
+                'route' => '/list',
+                'defaults' => array(
+                  'controller' => 'RoadInfo\Controller\Segment',
+                  'action' => 'list'
+                ),
+              )
+            ),
+            'update' => array(
+              'type' => 'Zend\Mvc\Router\Http\Segment',
+              'options' => array(
+                'route' => '/:id/update',
+                'constraints' => array(
+                  'id' => '[0-9]*',
+                ),
+                'defaults' => array(
+                  'controller' => 'RoadInfo\Controller\Segment',
+                  'action' => 'update'
+                ),
+              )
+            ),
+          ),
+        ),
+      ),
     ),
     'service_manager' => array(
         'abstract_factories' => array(
@@ -48,7 +97,9 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
+            'RoadInfo\Controller\Console' => 'RoadInfo\Controller\ConsoleController',
             'RoadInfo\Controller\Index' => 'RoadInfo\Controller\IndexController',
+            'RoadInfo\Controller\Segment' => 'RoadInfo\Controller\SegmentController',
         ),
     ),
     'view_helpers' => array(
