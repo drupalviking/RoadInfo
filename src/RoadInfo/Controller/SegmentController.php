@@ -20,13 +20,13 @@ class SegmentController extends AbstractActionController{
     }
   }
 
-  public function listAction(){
+  public function blaAction(){
     $sm = $this->getServiceLocator();
     $segmentService = $sm->get('RoadInfo\Service\Segment');
     $segments = $segmentService->fetchAll();
 
     if( $segments != false){
-      return new ViewModel(['segments' => $segments]);
+      return new ViewModel();
     }
     else{
       return $this->notFoundAction();

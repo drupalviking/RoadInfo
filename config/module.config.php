@@ -31,7 +31,7 @@ return array(
             'route' => '/segment',
             'defaults' => array(
               'controller' => 'RoadInfo\Controller\Segment',
-              'action' => 'list'
+              'action' => 'bla'
             ),
           ),
           'may_terminate' => true,
@@ -52,10 +52,10 @@ return array(
             'list' => array(
               'type' => 'Zend\Mvc\Router\Http\Segment',
               'options' => array(
-                'route' => '/list',
+                'route' => '/bla',
                 'defaults' => array(
                   'controller' => 'RoadInfo\Controller\Segment',
-                  'action' => 'list'
+                  'action' => 'bla'
                 ),
               )
             ),
