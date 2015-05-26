@@ -19,12 +19,23 @@ class Segment extends Form{
     $this->setAttribute('method', 'post');
 
     $this->add(array(
+      'name' => 'road_number',
+      'type' => 'Zend\Form\Element\Text',
+      'attributes' => array(
+        'placeholder' => 'Veganúmer',
+        'tabindex' => 1
+      ),
+      'options' => array(
+        'label' => 'Veganúmer (Comma seperated)',
+      ),
+    ));
+
+    $this->add(array(
       'name' => 'start_lat',
       'type' => 'Zend\Form\Element\Text',
       'attributes' => array(
         'placeholder' => 'Breiddargráða (Norðlægrar breiddar)',
-        'required' => 'required',
-        'tabindex' => 3
+        'tabindex' => 2
       ),
       'options' => array(
         'label' => 'Breiddargráða byrjunarpunkts',
@@ -36,11 +47,34 @@ class Segment extends Form{
       'type' => 'Zend\Form\Element\Text',
       'attributes' => array(
         'placeholder' => 'Lengdargráða (Vestlægrar lengdar (neikvæð tala))',
-        'required' => 'required',
-        'tabindex' => 4
+        'tabindex' => 3
       ),
       'options' => array(
         'label' => 'Lengdargráða byrjunarpunkts',
+      ),
+    ));
+
+    $this->add(array(
+      'name' => 'gis_start_x',
+      'type' => 'Zend\Form\Element\Text',
+      'attributes' => array(
+        'placeholder' => 'GIS X-hnit (Start)',
+        'tabindex' => 4
+      ),
+      'options' => array(
+        'label' => 'GIS X-hnit (Start)',
+      ),
+    ));
+
+    $this->add(array(
+      'name' => 'gis_start_y',
+      'type' => 'Zend\Form\Element\Text',
+      'attributes' => array(
+        'placeholder' => 'GIS Y-hnit (Start)',
+        'tabindex' => 5
+      ),
+      'options' => array(
+        'label' => 'GIS Y-hnit (Start)',
       ),
     ));
 
@@ -49,8 +83,7 @@ class Segment extends Form{
       'type' => 'Zend\Form\Element\Text',
       'attributes' => array(
         'placeholder' => 'Breiddargráða (Norðlægrar breiddar)',
-        'required' => 'required',
-        'tabindex' => 3
+        'tabindex' => 6
       ),
       'options' => array(
         'label' => 'Breiddargráða endapunkts',
@@ -62,11 +95,34 @@ class Segment extends Form{
       'type' => 'Zend\Form\Element\Text',
       'attributes' => array(
         'placeholder' => 'Lengdargráða (Vestlægrar lengdar (neikvæð tala))',
-        'required' => 'required',
-        'tabindex' => 4
+        'tabindex' => 7
       ),
       'options' => array(
         'label' => 'Lengdargráða endapunkts',
+      ),
+    ));
+
+    $this->add(array(
+      'name' => 'gis_end_x',
+      'type' => 'Zend\Form\Element\Text',
+      'attributes' => array(
+        'placeholder' => 'GIS X-hnit (END)',
+        'tabindex' => 8
+      ),
+      'options' => array(
+        'label' => 'GIS X-hnit (END)',
+      ),
+    ));
+
+    $this->add(array(
+      'name' => 'gis_end_y',
+      'type' => 'Zend\Form\Element\Text',
+      'attributes' => array(
+        'placeholder' => 'GIS Y-hnit (END)',
+        'tabindex' => 9
+      ),
+      'options' => array(
+        'label' => 'GIS Y-hnit (END)',
       ),
     ));
 
@@ -75,8 +131,7 @@ class Segment extends Form{
       'type' => 'Zend\Form\Element\Text',
       'attributes' => array(
         'placeholder' => 'Breiddargráða (Norðlægrar breiddar)',
-        'required' => 'required',
-        'tabindex' => 3
+        'tabindex' => 10
       ),
       'options' => array(
         'label' => 'Breiddargráða miðjupunkts (fyrir skilti)',
@@ -88,8 +143,7 @@ class Segment extends Form{
       'type' => 'Zend\Form\Element\Text',
       'attributes' => array(
         'placeholder' => 'Lengdargráða (Vestlægrar lengdar (neikvæð tala))',
-        'required' => 'required',
-        'tabindex' => 4
+        'tabindex' => 11
       ),
       'options' => array(
         'label' => 'Lengdargráða miðjupunkts (fyrir skilti)',

@@ -58,7 +58,7 @@ class Segment implements DataSourceAwareInterface{
     try{
       $statement = $this->pdo->prepare("
         SELECT * FROM `Segment`
-        ORDER BY name_short ASC
+        ORDER BY name_long ASC
       ");
 
       $statement->execute();
@@ -108,6 +108,9 @@ class Segment implements DataSourceAwareInterface{
       return $statement->rowCount();
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
+      echo "</pre>";
       throw new Exception("Can't update segment entry with id [{$id}]");
     }
   }

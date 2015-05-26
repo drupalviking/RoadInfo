@@ -8,7 +8,9 @@
 namespace RoadInfo\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Helper\ViewModel;
+use Zend\View\Model\ViewModel;
+use RoadInfo\Form\Segment;
+use ArrayObject;
 
 class SegmentController extends AbstractActionController{
   public function indexAction(){
@@ -20,13 +22,13 @@ class SegmentController extends AbstractActionController{
     }
   }
 
-  public function blaAction(){
+  public function listAction(){
     $sm = $this->getServiceLocator();
     $segmentService = $sm->get('RoadInfo\Service\Segment');
     $segments = $segmentService->fetchAll();
 
-    if( $segments != false){
-      return new ViewModel();
+    if( $segments ){
+      return new ViewModel(["segments" => $segments]);
     }
     else{
       return $this->notFoundAction();
@@ -37,7 +39,7 @@ class SegmentController extends AbstractActionController{
     $sm = $this->getServiceLocator();
     $segmentService = $sm->get('RoadInfo\Service\Segment');
 
-    $form = new SegmentForm();
+    $form = new Segment();
     if (($segment = $segmentService->get($this->params()->fromRoute('id')) ) != false) {
       //POST
       //  post request
@@ -51,7 +53,7 @@ class SegmentController extends AbstractActionController{
           unset($data['submit']);
           $segmentService->update($segment->id, $data);
           return $this->redirect()
-            ->toRoute('segment/index', ['id' => $segment->id]);
+            ->toRoute('segment/list');
           //INVALID
           //  form data is invalid
         }
@@ -76,7 +78,7 @@ class SegmentController extends AbstractActionController{
           ]
         );
 
-        $view->setTerminal($this->request->isXmlHttpRequest());
+        //$view->setTerminal($this->request->isXmlHttpRequest());
         return $view;
       }
     }

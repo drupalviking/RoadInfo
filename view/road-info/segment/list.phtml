@@ -1,0 +1,31 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: drupalviking
+ * Date: 22/05/15
+ * Time: 08:57
+ */
+?>
+<h1>Listi</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Segment ID</th>
+      <th>Nafn</th>
+      <th>GPS staða</th>
+      <th>Route staða</th>
+      <th>Aðgerð</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach( $this->segments as $segment ) : ?>
+      <tr>
+        <td><?=$segment->id;?></td>
+        <td><?=$segment->name_long;?></td>
+        <td><?=($segment->start_lat) ? "Já" : "Nei"; ?></td>
+        <td><?=($segment->path_data) ? "Já" : "Nei"; ?></td>
+        <td><a href="<?=$this->url('segment/update',array('id'=>$segment->id))?>">Uppfæra</a></td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>

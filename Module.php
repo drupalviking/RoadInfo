@@ -32,6 +32,22 @@ use Zend\EventManager\EventInterface;
 
 class Module
 {
+	public function onBootstrap(MvcEvent $e){
+		$logger = $e->getApplication()->getServiceManager()->get('Logger');
+
+		//SHUT DOWN
+		//	register shutdown function that will log a critical message
+		//
+		register_shutdown_function(function () use ($logger) {
+			if ($e = error_get_last()) {
+				$logger->critical(
+					"register_shutdown_function: ".
+					$e['message'] . " in " . $e['file'] . ' line ' . $e['line']
+				);
+				echo "Smá vandræði";
+			}
+		});
+	}
 	/**
 	 * Load the application config.
 	 *

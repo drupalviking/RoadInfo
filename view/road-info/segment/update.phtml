@@ -6,4 +6,106 @@
  * Time: 16:15
  */
 ?>
+<style>
+  input{
+    padding:10px;
+    font-size: 14px;
+  }
+  div{
+    margin-bottom: 10px;
+  }
+  .left{
+    float: left;
+    width: 40%;
+  }
+
+  .right{
+    float: left;
+    width: 40%;
+  }
+
+  .button{
+    clear: both;
+  }
+
+  input[type=submit]{
+    padding: 10px;
+    font-size: 16px;
+    background-color: green;
+    color: white;
+    margin-left: 300px;;
+  }
+</style>
 <h1>Breyta færslu</h1>
+<h2><?=$this->segment->name_long;?> (<?=$this->segment->id;?>)</h2>
+<div class="layout layout--three-columns">
+  <section class="layout__section">
+    <?=$this->form()->openTag($this->form);?>
+    <div class="left">
+      <div class="form-group">
+        <?=$this->formLabel($form->get('road_number'));?>
+        <?=$this->formElement($form->get('road_number')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('road_number'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('start_lat'));?>
+        <?=$this->formElement($form->get('start_lat')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('start_lat'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('start_lng'));?>
+        <?=$this->formElement($form->get('start_lng')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('start_lng'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('gis_start_x'));?>
+        <?=$this->formElement($form->get('gis_start_x')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('gis_start_x'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('gis_start_y'));?>
+        <?=$this->formElement($form->get('gis_start_y')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('gis_start_y'));?>
+      </div>
+    </div>
+    <div class="right">
+      <div class="form-group">
+        <?=$this->formLabel($form->get('end_lat'));?>
+        <?=$this->formElement($form->get('end_lat')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('end_lat'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('end_lng'));?>
+        <?=$this->formElement($form->get('end_lng')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('end_lng'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('gis_end_x'));?>
+        <?=$this->formElement($form->get('gis_end_x')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('gis_end_x'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('gis_end_y'));?>
+        <?=$this->formElement($form->get('gis_end_y')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('gis_end_y'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('center_lat'));?>
+        <?=$this->formElement($form->get('center_lat')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('center_lat'));?>
+      </div>
+      <div class="form-group">
+        <?=$this->formLabel($form->get('center_lng'));?>
+        <?=$this->formElement($form->get('center_lng')->setAttribute('class','form-control'));?>
+        <?=$this->formElementErrors($form->get('center_lng'));?>
+      </div>
+    </div>
+
+
+    <div class="form-group button">
+      <?=$this->formElement($form->get('submit')->setAttribute('class','btn btn-default')->setAttribute('value','Uppfæra'));?>
+    </div>
+    <?= $this->form()->closeTag() ?>
+  </section>
+  <aside class="layout__aside"></aside>
+</div>

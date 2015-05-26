@@ -33,7 +33,11 @@ class IndexController extends AbstractActionController
     {
         //SERVICES
         $sm = $this->getServiceLocator();
+        $segmentService = $sm->get('RoadInfo\Service\Segment');
 
-        return new ViewModel();
+
+        if (($segment = $segmentService->get(909240001)) != false) {
+            return new ViewModel(['segment' => $segment]);
+        }
     }
 }
