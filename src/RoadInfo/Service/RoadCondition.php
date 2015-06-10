@@ -49,6 +49,31 @@ class RoadCondition implements DataSourceAwareInterface{
     }
   }
 
+  public function getBySegmentAndForcastDate($segmentId, $forcastDate){
+    try{
+      $statement = $this->pdo->prepare("
+        SELECT * FROM RoadCondition
+        WHERE segment_id = :segment_id
+        AND forecast_date = :forecast_date
+      ");
+
+      $statement->execute(array(
+        'segment_id' => $segmentId,
+        'forecast_date' => $forcastDate
+      ));
+      $roadcondition = $statement->fetchObject();
+
+      if(!$roadcondition){
+        return false;
+      }
+
+      return $roadcondition;
+    }
+    catch( PDOException $e ){
+      throw new Exception("Can't get RoadCondition item [{$id}]", 0, $e);
+    }
+  }
+
   /**
    * Gets all Segments
    *
@@ -57,8 +82,8 @@ class RoadCondition implements DataSourceAwareInterface{
   public function fetchAll(){
     try{
       $statement = $this->pdo->prepare("
-        SELECT * FROM RoadCondition
-        ORDER BY short_name ASC
+        SELECT * FROM RoadCondition rc
+        ORDER BY rc.name_short ASC
       ");
 
       $statement->execute();
@@ -66,6 +91,9 @@ class RoadCondition implements DataSourceAwareInterface{
       return $statement->fetchAll();
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
+      echo "</pre>";
       throw new Exception("Can't get Road conditions");
     }
   }

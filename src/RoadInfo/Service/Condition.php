@@ -60,8 +60,8 @@ class Condition implements DataSourceAwareInterface{
   public function fetchAll(){
     try{
       $statement = $this->pdo->prepare("
-        SELECT * FROM `Condition
-        ORDER BY condition ASC
+        SELECT * FROM `Condition`
+        ORDER BY condition_short ASC
       ");
 
       $statement->execute();
@@ -69,6 +69,7 @@ class Condition implements DataSourceAwareInterface{
       return $statement->fetchAll();
     }
     catch( PDOException $e){
+      echo $e->getMessage();
       throw new Exception("Can't get conditions");
     }
   }
@@ -112,6 +113,38 @@ class Condition implements DataSourceAwareInterface{
     }
     catch( PDOException $e){
       throw new Exception("Can't update condition entry with id [{$id}]");
+    }
+  }
+
+  public function getRoadCondidtionsByCondition(){
+    $return_arr = array();
+    try{
+      $conditions = $this->fetchAll();
+
+      foreach($conditions as $condition){
+        $statement = $this->pdo->prepare("
+        SELECT rc.id, rc.segment_id, rc.forecast_date, rc.line_color, s.name_long, s.name_short, sp.pattern
+        FROM road_info.RoadCondition rc
+        INNER JOIN Segment s
+        ON s.id = rc.segment_id
+        INNER JOIN SegmentParts sp
+        ON sp.id_butur = rc.segment_id
+        WHERE rc.road_condition_id = :id
+        AND forecast_date = (SELECT max(forecast_date) FROM RoadCondition)
+        ORDER BY road_condition_id;
+      ");
+
+        $statement->execute(array("id" => $condition->id) );
+        $key = ($condition->condition_url) ? $condition->condition_url : $condition->id;
+        $return_arr[$key] = $statement->fetchAll();
+      }
+
+      return $return_arr;
+
+    }
+    catch( PDOException $e){
+      echo $e->getMessage();
+      throw new Exception("Can't get conditions");
     }
   }
 

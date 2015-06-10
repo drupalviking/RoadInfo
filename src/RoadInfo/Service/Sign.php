@@ -58,7 +58,7 @@ class Sign implements DataSourceAwareInterface{
     try{
       $statement = $this->pdo->prepare("
         SELECT * FROM Sign
-        ORDER BY short_name ASC
+        ORDER BY sign_url ASC
       ");
 
       $statement->execute();
@@ -67,6 +67,36 @@ class Sign implements DataSourceAwareInterface{
     }
     catch( PDOException $e){
       throw new Exception("Can't get signs");
+    }
+  }
+
+  public function getSignMarkers(){
+    $return_arr = array();
+    try{
+      $signs = $this->fetchAll();
+
+      foreach($signs as $sign){
+        $statement = $this->pdo->prepare("
+        SELECT rc.segment_id, rc.sign_id, s.center_lat, s.center_lng, si.`name`, si.sign_url
+        FROM road_info.RoadCondition rc
+        INNER JOIN Segment s
+        ON rc.segment_id = s.id
+        INNER JOIN Sign si
+        ON si.id = rc.sign_id
+        WHERE sign_id = :sign_id
+      ");
+
+        $statement->execute(array("sign_id" => $sign->id) );
+        $key = ($sign->sign_url) ? $sign->sign_url : $sign->id;
+        $return_arr[$key] = $statement->fetchAll();
+      }
+
+      return $return_arr;
+
+    }
+    catch( PDOException $e){
+      echo $e->getMessage();
+      throw new Exception("Can't get conditions");
     }
   }
 

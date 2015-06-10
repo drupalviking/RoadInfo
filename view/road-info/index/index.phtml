@@ -1,1 +1,68 @@
 <h1>Road info</h1>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.4"></script>
+<div id="map" style="width: 1100px; height: 650px"></div>
+<script>
+  var greidfaert_color = "lime";
+  var lokad_color = "red";
+  var asthungi_2_tonn_color = "blue";
+  var asthungi_7_tonn_color = "cyan";
+  var faert_fjallabilum_color = "green";
+  var ofaert_color = "red";
+  var snjothekja_color = "yellow";
+  var thaefingur_color = "yellow";
+  var ofaert_ekki_i_thjonustu_color = "red";
+  var halkublettir_color = "black";
+  var steinkast_color = "pink";
+
+  var map = L.map('map',
+    {
+      center: [65.10418, -19.0],
+      zoom: 7
+    });
+
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+  var layer = new L.StamenTileLayer("watercolor");
+  //map.addLayer(layer);
+
+  <?php $segmentLayers = array(); $markerLayers = array(); ?>
+
+  <?php foreach($this->segments as $key => $segment ): ?>
+    var <?=$key;?> = [
+    <?php if(is_array($segment)) : ?>
+      <?php foreach($segment as $segm) : ?>
+        <?php if(isset($segm->pattern)) : ?>
+        {
+          "type": "LineString",
+          "coordinates" : [<?=$segm->pattern;?>]
+        },
+        <?php endif; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+    ];
+    L.geoJson(<?=$key;?>, {style: {"color": "<?=$segm->line_color;?>"}}).addTo(map);
+  <?php endforeach; ?>
+
+  <?php foreach($this->signs as $key => $sign) : ?>
+    <?php $markerLayers[$key . "_layer"] = $sign[0]->name; ?>
+    <?php $counter = 1; $signArrayString = ""; ?>
+    var <?=$key . "_icon"; ?> = L.icon({iconUrl: '<?="road-info/icon/" . $sign[0]->sign_url . '.gif'; ?>', iconAnchor: [16,16], popupAnchor: [0,0]});
+    <?php foreach( $sign as $sgn ) : ?>
+      var <?=$key . "_marker_" . $counter; ?> = L.marker([<?=$sgn->center_lat;?>, <?=$sgn->center_lng;?>], {icon: <?=$key . "_icon"; ?>}).bindPopup("<?=$sgn->name;?>");
+      <?php $signArrayString .= $key . "_marker_" . $counter++ . ", "; ?>
+    <?php endforeach; ?>
+    var <?=$key . "_layer";?> = L.layerGroup(<?= "[" . $signArrayString . "]";?>).addTo(map);
+  <?php endforeach; ?>
+
+  L.control.layers({}, {
+    <?php foreach( $markerLayers as $key => $value ) : ?>
+      <?="'" . $value . "': " . $key . ", "; ?>
+    <?php endforeach; ?>
+  }).addTo(map);
+  L.control.scale().addTo(map);
+
+
+</script>
+<pre>
+  <?php //print_r($this->signs); ?>
+</pre>

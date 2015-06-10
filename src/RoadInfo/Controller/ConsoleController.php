@@ -20,4 +20,10 @@ class ConsoleController extends AbstractActionController{
     $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
     $xmlStreamService->processRoadConditions();
   }
+
+  public function processShapes(){
+    $sm = $this->getServiceLocator();
+    $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
+    $xmlStreamService->processShapes();
+  }
 }
