@@ -25,7 +25,6 @@ class XMLStream implements DataSourceAwareInterface {
 
   public function processRoadConditions(){
     $obj = $this->fetchRoadConditions();
-    echo "<h1>Process Road Conditions</h1>";
     foreach( $obj as $item ){
       $this->processRoadConditionItem($item);
     }
