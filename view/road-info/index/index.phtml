@@ -23,6 +23,7 @@
 
   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
   var layer = new L.StamenTileLayer("watercolor");
+  var country_layer;
   //map.addLayer(layer);
 
   <?php $segmentLayers = array(); $markerLayers = array(); ?>
@@ -30,6 +31,7 @@
   <?php foreach($this->segments as $key => $segment ): ?>
     var <?=$key;?> = [
     <?php if(is_array($segment)) : ?>
+      <?php $counter = 1; ?>
       <?php foreach($segment as $segm) : ?>
         <?php if(isset($segm->pattern)) : ?>
         {
@@ -40,8 +42,10 @@
       <?php endforeach; ?>
     <?php endif; ?>
     ];
-    L.geoJson(<?=$key;?>, {style: {"color": "<?=$segm->line_color;?>"}}).addTo(map);
+    var <?=$key . "_geo";?> = L.geoJson(<?=$key;?>, {style: {"color": "<?=$segm->line_color;?>"}});
+    <?php $segmentLayers[] = $key . "_geo";?>
   <?php endforeach; ?>
+
 
   <?php foreach($this->signs as $key => $sign) : ?>
     <?php $markerLayers[$key . "_layer"] = $sign[0]->name; ?>
@@ -51,13 +55,13 @@
       var <?=$key . "_marker_" . $counter; ?> = L.marker([<?=$sgn->center_lat;?>, <?=$sgn->center_lng;?>], {icon: <?=$key . "_icon"; ?>}).bindPopup("<?=$sgn->name;?>");
       <?php $signArrayString .= $key . "_marker_" . $counter++ . ", "; ?>
     <?php endforeach; ?>
-    var <?=$key . "_layer";?> = L.layerGroup(<?= "[" . $signArrayString . "]";?>).addTo(map);
+    var <?=$key . "_layer";?> = L.layerGroup(<?= "[" . $signArrayString . "]";?>);
   <?php endforeach; ?>
 
+  var countryLayer = L.layerGroup([<?php foreach($segmentLayers as $s){echo $s . ",";} ?>]).addTo(map);
+
   L.control.layers({}, {
-    <?php foreach( $markerLayers as $key => $value ) : ?>
-      <?="'" . $value . "': " . $key . ", "; ?>
-    <?php endforeach; ?>
+    "Allt landið" : countryLayer
   }).addTo(map);
   L.control.scale().addTo(map);
 
