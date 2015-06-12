@@ -87,6 +87,9 @@ class WeatherStation implements DataSourceAwareInterface{
       return $id;
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
+      echo "</pre>";
       throw new Exception("Can't create Weather station entry");
     }
   }
@@ -100,7 +103,7 @@ class WeatherStation implements DataSourceAwareInterface{
    */
   public function update($id, array $data){
     try{
-      $updateString = $this->updateString('Weather', $data, "id={$id}");
+      $updateString = $this->updateString('WeatherStation', $data, "id={$id}");
       $statement = $this->pdo->prepare($updateString);
       $statement->execute($data);
 

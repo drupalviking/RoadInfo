@@ -39,6 +39,7 @@ class IndexController extends AbstractActionController
         $conditionService = $sm->get('RoadInfo\Service\Condition');
         $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
 
+        $xmlStreamService->processWeatherStations();
         $xmlStreamService->processRoadConditions();
 
         if (($segments = $segmentService->fetchAll()) != false) {

@@ -36,9 +36,42 @@ class XMLStream implements DataSourceAwareInterface {
     return json_decode($json);
   }
 
-  public function processWeaterStationItem($item){
+  public function processWeatherStationItem($item){
     //First we check to see if the weather station is available in the database
+    $weatherStationService = new WeatherStation();
+    $weatherStationService->setDataSource($this->pdo);
+    $weatherStation = $weatherStationService->get($item->Nr);
 
+    $data = array(
+      "id" => $item->Nr,
+      "segment_id" => $item->IdButur1,
+      "segment2_id" => $item->IdButur2,
+      "latitude" => $item->Breidd,
+      "longitude" => -1 * $item->Lengd,
+      "height" => ($item->Haed) ? $item->Haed : 0,
+      "sea_height" => ($item->Sjavarhaed) ? $item->Sjavarhaed : 0,
+      "name" => $item->Nafn,
+      "dew_point" => ($item->Daggarmark) ? $item->Daggarmark : 0,
+      "date" => strtotime($item->Dags),
+      "airpressure" => ($item->Loftthrystingur) ? $item->Loftthrystingur : 0,
+      "temperature" => ($item->Hiti) ? $item->Hiti : 0,
+      "humidity" => ($item->Raki) ? $item->Raki : 0,
+      "traffic_last_ten" => ($item->Umf10Min) ? $item->Umf10Min : 0,
+      "traffic_accumulated" => ($item->UmfSum) ? $item->UmfSum : 0,
+      "road_temperature" => ($item->Veghiti) ? $item->Veghiti : 0,
+      "wind_direction" => ($item->Vindatt) ? $item->Vindatt : 0,
+      "wind_direction_asc" => ($item->VindattAsc) ? $item->VindattAsc : 'N',
+      "wind_direction_ast_dev" => ($item->VindattAstDev) ? $item->VindattAstDev : 0,
+      "wind_speed" => ($item->Vindhradi) ? $item->Vindhradi : 0,
+      "wind_gust" => ($item->Vindhvida) ? $item->Vindhvida : 0
+    );
+
+    if($weatherStation){
+      $weatherStationService->update($weatherStation->id, $data);
+    }
+    else{
+      $weatherStationService->create($data);
+    }
   }
 
   public function processRoadConditions(){

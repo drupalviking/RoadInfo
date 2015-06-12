@@ -139,6 +139,13 @@ class Route implements DataSourceAwareInterface{
 
           $statement->execute(array("segment_id" => $segment->segment_id));
           $segment->segments->segment_parts = $statement->fetchAll();
+
+          $statement = $this->pdo->prepare("
+            SELECT * FROM WeatherStation
+            WHERE segment_id = :segment_id
+          ");
+          $statement->execute(array("segment_id" => $segment->segment_id));
+          $segment->weatherStations = $statement->fetchAll();
         }
 
       }

@@ -66,6 +66,17 @@
     <?php if(is_array($route->segments)) : ?>
       <?php foreach($route->segments as $segment) : ?>
         <?php if(is_object($segment->segments)) : ?>
+          /** Handle weather information for the segment */
+          <?php if(sizeof($segment->weatherStations > 1)) : ?>
+            <?php $weatherArray = array(); ?>
+            <?php foreach($segment->weatherStations as $weatherStation) : ?>
+              <?php $markup = "<p><strong><em>Upplýsingar frá: " . strftime('%d.%m %Y %H:%M',$weatherStation->date) . "</em></strong></p><h2>Veðurupplýsingar</h2><ul><li>Hæð yfir sjávarmáli: {$weatherStation->height}m</li><li>Daggarmark: {$weatherStation->dew_point}°C</li><li>Loftþrýstingur: {$weatherStation->airpressure}hPA</li><li>Hitastig: {$weatherStation->temperature}°C</li><li>Veghiti: {$weatherStation->road_temperature}°C</li><li>Rakastig: {$weatherStation->humidity}%</li><li>Vindur: {$weatherStation->wind_direction_asc} ({$weatherStation->wind_direction}°) {$weatherStation->wind_speed} m/s (hviður allt að {$weatherStation->wind_gust} m/s)</li></ul><h2>Umferðarupplýsingar</h2><ul><li>Umferð sl. tíu mín: {$weatherStation->traffic_last_ten}</li><li>Umferð frá miðnætti: {$weatherStation->traffic_accumulated}</li></ul>";?>
+              var <?="butur_" . $segment->segment_id . "_weatherstation_" . $weatherStation->id; ?> =
+                L.marker([<?=$weatherStation->latitude . ", " . $weatherStation->longitude;?>]).bindPopup("<h1><?=$weatherStation->name;?></h1><?=$markup;?>" );
+              <?php $weatherArray[] = "butur_" . $segment->segment_id . "_weatherstation_" . $weatherStation->id; ?>
+            <?php endforeach; ?>
+          <?php endif; ?> /** End handling of weather information for the segment
+          /** Handle segment parts */
           <?php foreach($segment->segments->segment_parts as $segmentPart) : ?>
             <?php $segmentName = "butur_" . $segmentPart->id_butur . "_obj_" . $segmentPart->object_id . "_vegur_" . $segmentPart->nr_vegur . "_kafli_" . $segmentPart->nr_kafli; ?>
             var <?=$segmentName; ?> = L.geoJson({
@@ -78,7 +89,7 @@
             ).bindPopup("<h1><?=$route->long_name;?></h1><h2><?=$segmentPart->nafn;?></h2><?=$segmentName;?>");
           <?php $routeSegmentPartsArray[$segmentName] = $segmentPart->nafn; ?>
           <?php endforeach; ?>
-          var <?="butur_" . $segment->segment_id; ?> = L.layerGroup([<?php foreach($routeSegmentPartsArray as $key => $value){echo $key . ",";} ?>]);
+          var <?="butur_" . $segment->segment_id; ?> = L.layerGroup([<?php foreach($routeSegmentPartsArray as $key => $value){echo $key . ",";} ?><?php foreach($weatherArray as $w){echo $w . ",";}?>]);
           <?php $routeSegmentArray[] = "butur_" . $segment->segment_id; ?>
         <?php endif; ?>
       <?php endforeach; ?>
@@ -91,6 +102,7 @@
   L.control.layers({}, {
     "Allt landið" : countryLayer,
     <?php foreach( $routeArray as $key => $value){echo "'" . $value . "':" . $key . ",";} ?>
+    "Veður" : butur_910040001_weatherstation_40
   }).addTo(map);
   L.control.scale().addTo(map);
 
