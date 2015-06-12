@@ -58,7 +58,7 @@
     var <?=$key . "_layer";?> = L.layerGroup(<?= "[" . $signArrayString . "]";?>);
   <?php endforeach; ?>
 
-  var countryLayer = L.layerGroup([<?php foreach($segmentLayers as $s){echo $s . ",";} ?>]);
+  var countryLayer = L.layerGroup([<?php foreach($segmentLayers as $s){echo $s . ",";} ?>]).addTo(map);
 
   <?php $routeArray = array(); ?>
   <?php foreach($this->routes as $route) : ?>
