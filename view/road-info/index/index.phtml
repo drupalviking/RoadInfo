@@ -26,11 +26,11 @@
   var country_layer;
   //map.addLayer(layer);
 
-  <?php $segmentLayers = array(); $markerLayers = array(); ?>
+  <?php $segmentLayers = array(); $markerLayers = array(); $routeLayers = array();?>
 
   <?php foreach($this->segments as $key => $segment ): ?>
-    var <?=$key;?> = [
-    <?php if(is_array($segment)) : ?>
+    <?php if(sizeof($segment) > 0) : ?>
+      var <?=$key;?> = [
       <?php $counter = 1; ?>
       <?php foreach($segment as $segm) : ?>
         <?php if(isset($segm->pattern)) : ?>
@@ -40,10 +40,10 @@
         },
         <?php endif; ?>
       <?php endforeach; ?>
+      ];
+      var <?=$key . "_geo";?> = L.geoJson(<?=$key;?>, {style: {"color": "<?=$segm->line_color;?>"}});
+      <?php $segmentLayers[] = $key . "_geo";?>
     <?php endif; ?>
-    ];
-    var <?=$key . "_geo";?> = L.geoJson(<?=$key;?>, {style: {"color": "<?=$segm->line_color;?>"}});
-    <?php $segmentLayers[] = $key . "_geo";?>
   <?php endforeach; ?>
 
 
@@ -58,10 +58,39 @@
     var <?=$key . "_layer";?> = L.layerGroup(<?= "[" . $signArrayString . "]";?>);
   <?php endforeach; ?>
 
-  var countryLayer = L.layerGroup([<?php foreach($segmentLayers as $s){echo $s . ",";} ?>]).addTo(map);
+  var countryLayer = L.layerGroup([<?php foreach($segmentLayers as $s){echo $s . ",";} ?>]);
+
+  <?php $routeArray = array(); ?>
+  <?php foreach($this->routes as $route) : ?>
+    <?php $routeSegmentArray = array(); $routeSegmentPartsArray = array(); ?>
+    <?php if(is_array($route->segments)) : ?>
+      <?php foreach($route->segments as $segment) : ?>
+        <?php if(is_object($segment->segments)) : ?>
+          <?php foreach($segment->segments->segment_parts as $segmentPart) : ?>
+            <?php $segmentName = "butur_" . $segmentPart->id_butur . "_obj_" . $segmentPart->object_id . "_vegur_" . $segmentPart->nr_vegur . "_kafli_" . $segmentPart->nr_kafli; ?>
+            var <?=$segmentName; ?> = L.geoJson({
+              "type" : "LineString",
+              "coordinates" :[
+                <?=$segmentPart->pattern;?>
+              ]
+            },
+            {style: {"color": "<?=$segment->segments->line_color;?>"}}
+            ).bindPopup("<h1><?=$route->long_name;?></h1><h2><?=$segmentPart->nafn;?></h2><?=$segmentName;?>");
+          <?php $routeSegmentPartsArray[$segmentName] = $segmentPart->nafn; ?>
+          <?php endforeach; ?>
+          var <?="butur_" . $segment->segment_id; ?> = L.layerGroup([<?php foreach($routeSegmentPartsArray as $key => $value){echo $key . ",";} ?>]);
+          <?php $routeSegmentArray[] = "butur_" . $segment->segment_id; ?>
+        <?php endif; ?>
+      <?php endforeach; ?>
+      var <?="route_" . $route->short_name;?> = L.layerGroup([<?php foreach($routeSegmentArray as $value){echo $value . ",";} ?>]);
+      <?php $routeArray["route_" . $route->short_name] = $route->long_name; ?>
+    <?php endif; ?>
+  <?php endforeach; ?>
+
 
   L.control.layers({}, {
-    "Allt landið" : countryLayer
+    "Allt landið" : countryLayer,
+    <?php foreach( $routeArray as $key => $value){echo "'" . $value . "':" . $key . ",";} ?>
   }).addTo(map);
   L.control.scale().addTo(map);
 

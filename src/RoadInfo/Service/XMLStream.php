@@ -23,6 +23,24 @@ class XMLStream implements DataSourceAwareInterface {
    */
   private $pdo;
 
+  public function processWeatherStations(){
+    $obj = $this->fetchWeatherStations();
+    foreach($obj as $item){
+      $this->processWeatherStationItem($item);
+    }
+  }
+
+  public function fetchWeatherStations(){
+    $json = file_get_contents(WEATHER_STATIONS);
+
+    return json_decode($json);
+  }
+
+  public function processWeaterStationItem($item){
+    //First we check to see if the weather station is available in the database
+
+  }
+
   public function processRoadConditions(){
     $obj = $this->fetchRoadConditions();
     foreach( $obj as $item ){

@@ -99,6 +99,57 @@ class Route implements DataSourceAwareInterface{
     }
   }
 
+  public function fetchAllWithSegmentData(){
+    try{
+      $statement = $this->pdo->prepare("
+        SELECT * FROM Route
+        ORDER BY short_name ASC
+      ");
+
+      $statement->execute();
+
+      $routes = $statement->fetchAll();
+
+      foreach($routes as &$route){
+        $statement = $this->pdo->prepare("
+          SELECT distinct segment_id
+          FROM road_info.RoadCondition rc
+          WHERE route_id = :route_id
+        ");
+
+        $statement->execute(array("route_id" => $route->id));
+        $route->segments = $statement->fetchAll();
+      }
+
+      foreach($routes as $route){
+        foreach($route ->segments as &$segment){
+          $statement = $this->pdo->prepare("
+            SELECT * FROM RoadCondition
+            WHERE forecast_date = (select max(forecast_date) FROM RoadCondition)
+            AND segment_id = :segment_id
+          ");
+
+          $statement->execute(array("segment_id" => $segment->segment_id));
+          $segment->segments = $statement->fetchObject();
+
+          $statement = $this->pdo->prepare("
+            SELECT * FROM road_info.SegmentParts
+            WHERE id_butur = :segment_id
+          ");
+
+          $statement->execute(array("segment_id" => $segment->segment_id));
+          $segment->segments->segment_parts = $statement->fetchAll();
+        }
+
+      }
+
+      return $routes;
+    }
+    catch( PDOException $e){
+      throw new Exception("Can't get conditions");
+    }
+  }
+
   /**
    * Creates a Route entry in the database
    *
