@@ -102,7 +102,6 @@
   L.control.layers({}, {
     "Allt landið" : countryLayer,
     <?php foreach( $routeArray as $key => $value){echo "'" . $value . "':" . $key . ",";} ?>
-    "Veður" : butur_910040001_weatherstation_40
   }).addTo(map);
   L.control.scale().addTo(map);
 
