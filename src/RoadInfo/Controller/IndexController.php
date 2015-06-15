@@ -34,9 +34,9 @@ class IndexController extends AbstractActionController
         //SERVICES
         $sm = $this->getServiceLocator();
         $segmentService = $sm->get('RoadInfo\Service\Segment');
-        $signService = $sm->get('RoadInfo\Service\Sign');
         $routeService = $sm->get('RoadInfo\Service\Route');
-        $conditionService = $sm->get('RoadInfo\Service\Condition');
+        $roadConditionService = $sm->get('RoadInfo\Service\RoadCondition');
+        $weatherStationService = $sm->get('RoadInfo\Service\WeatherStation');
         $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
 
         $xmlStreamService->processWeatherStations();
@@ -44,9 +44,9 @@ class IndexController extends AbstractActionController
 
         if (($segments = $segmentService->fetchAll()) != false) {
             return new ViewModel([
-                'segments' => $conditionService->getRoadCondidtionsByCondition(),
-                'signs' => $signService->getSignMarkers(),
+                'segments' => $roadConditionService->fetchAllNewest(),
                 'routes' => $routeService->fetchAllWithSegmentData(),
+                'weatherStations' => $weatherStationService->fetchAll()
             ]);
         }
     }

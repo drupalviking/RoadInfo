@@ -75,6 +75,66 @@ class RoadCondition implements DataSourceAwareInterface{
   }
 
   /**
+   * Gets all newest conditions
+   *
+   * @return array
+   */
+  public function fetchAllNewest(){
+    try{
+      $roadConditions = $this->pdo->prepare("
+        SELECT * FROM `RoadCondition` rc
+        INNER JOIN Segment s ON s.id = rc.segment_id
+        INNER JOIN `Condition` cond
+        ON cond.id = rc.road_condition_id
+        WHERE forecast_date = (SELECT max(forecast_date) FROM RoadCondition)
+        ORDER BY segment_id ASC
+      ");
+
+      $roadConditions->execute();
+      $roadConditions = $roadConditions->fetchAll();
+
+      foreach($roadConditions as &$condition){
+        $signs = $this->pdo->prepare("
+        SELECT rc.segment_id, rc.sign_id, s.center_lat, s.center_lng, si.`name`, si.sign_url
+        FROM road_info.RoadCondition rc
+        INNER JOIN Segment s
+        ON rc.segment_id = s.id
+        INNER JOIN Sign si
+        ON si.id = rc.sign_id
+        WHERE segment_id = :segment_id
+        AND rc.forecast_date = (SELECT max(forecast_date) FROM RoadCondition)
+      ");
+
+        $signs->execute(array("segment_id" => $condition->segment_id) );
+        $condition->signs = $signs->fetchAll();
+
+        $weatherStations = $this->pdo->prepare("
+          SELECT * FROM WeatherStation
+          WHERE segment_id = :segment_id
+        ");
+
+        $weatherStations->execute(array("segment_id" => $condition->segment_id) );
+        $condition->weatherStations = $weatherStations->fetchAll();
+
+        $segmentParts = $this->pdo->prepare("
+          SELECT object_id, nr_vegur, nr_kafli, nafn, id_butur, pattern
+          FROM `road_info`.`SegmentParts`
+          WHERE id_butur = :segment_id
+        ");
+
+        $segmentParts->execute(array("segment_id" => $condition->segment_id) );
+        $condition->segmentParts = $segmentParts->fetchAll();
+      }
+
+      return $roadConditions;
+    }
+    catch( PDOException $e){
+      echo $e->getMessage();
+      throw new Exception("Can't get conditions");
+    }
+  }
+
+  /**
    * Gets all Segments
    *
    * @return array

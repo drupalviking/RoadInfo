@@ -84,6 +84,7 @@ class Sign implements DataSourceAwareInterface{
         INNER JOIN Sign si
         ON si.id = rc.sign_id
         WHERE sign_id = :sign_id
+        AND rc.forecast_date = (SELECT max(forecast_date) FROM RoadCondition)
       ");
 
         $statement->execute(array("sign_id" => $sign->id) );

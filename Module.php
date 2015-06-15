@@ -40,10 +40,10 @@ class Module
 		//
 		register_shutdown_function(function () use ($logger) {
 			if ($e = error_get_last()) {
-				$logger->critical(
-					"register_shutdown_function: ".
-					$e['message'] . " in " . $e['file'] . ' line ' . $e['line']
-				);
+				//$logger->critical(
+				echo	"register_shutdown_function: ".
+					$e['message'] . " in " . $e['file'] . ' line ' . $e['line'];
+				//);
 				echo "Smá vandræði";
 			}
 		});
@@ -93,9 +93,11 @@ class Module
 				'RoadInfo\Service\Condition' 		=> 'RoadInfo\Service\Condition',
 				'RoadInfo\Service\RoadCondition' 		=> 'RoadInfo\Service\RoadCondition',
 				'RoadInfo\Service\Route' 		=> 'RoadInfo\Service\Route',
+				'RoadInfo\Service\RouteSegment' 		=> 'RoadInfo\Service\RouteSegment',
 				'RoadInfo\Service\Segment' 		=> 'RoadInfo\Service\Segment',
 				'RoadInfo\Service\Sign' 		=> 'RoadInfo\Service\Sign',
 				'RoadInfo\Service\User' 		=> 'RoadInfo\Service\User',
+				'RoadInfo\Service\WeatherStation' 		=> 'RoadInfo\Service\WeatherStation',
 				'RoadInfo\Service\XMLStream' 		=> 'RoadInfo\Service\XMLStream',
 			],
 			'factories' => array(

@@ -128,6 +128,7 @@ class XMLStream implements DataSourceAwareInterface {
       $routeService = new Route();
       $routeService->setDataSource($this->pdo);
       $route = $routeService->getByShortName($item->IdLeid);
+
       if(!$route){
         $data = array(
           'short_name' => $item->IdLeid,
@@ -137,6 +138,16 @@ class XMLStream implements DataSourceAwareInterface {
       }
       else{
         $route = $route->id;
+      }
+
+      $routeSegmentService = new RouteSegment();
+      $routeSegmentService->setDataSource($this->pdo);
+      $routeSegment = $routeSegmentService->getRouteSegment($route, $segment);
+
+      if(!$routeSegment){
+        $data['route_id'] = $route;
+        $data['segment_id'] = $segment;
+        $routeSegmentService->create($data);
       }
     }
     else{

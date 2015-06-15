@@ -1,7 +1,7 @@
 <h1>Vegaupplýsingar</h1>
 <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.4"></script>
-<div id="map" style="width: 1100px; height: 650px"></div>
+<div id="map" style="width: 100%;height: 500px"></div>
 <script>
   var greidfaert_color = "lime";
   var lokad_color = "red";
@@ -21,89 +21,67 @@
       zoom: 7
     });
 
-  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
-  var layer = new L.StamenTileLayer("watercolor");
-  var country_layer;
-  //map.addLayer(layer);
+  var mainLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+  var watercolorLayer = new L.StamenTileLayer("watercolor");
 
-  <?php $segmentLayers = array(); $markerLayers = array(); $routeLayers = array();?>
+  /**
+   * Loop through the weather stations and create a dynamic variable for each and one.
+   * Then add those variables into an array for later use
+   */
+  var weatherStations = [];
+  <?php foreach($this->weatherStations as $weatherStation) : ?>
+    <?php $markup = "<p><strong><em>Upplýsingar frá: " . strftime('%d.%m %Y %H:%M',$weatherStation->date) . "</em></strong></p><h2>Veðurupplýsingar</h2><ul><li>Hæð yfir sjávarmáli: {$weatherStation->height}m</li><li>Daggarmark: {$weatherStation->dew_point}°C</li><li>Loftþrýstingur: {$weatherStation->airpressure}hPA</li><li>Hitastig: {$weatherStation->temperature}°C</li><li>Veghiti: {$weatherStation->road_temperature}°C</li><li>Rakastig: {$weatherStation->humidity}%</li><li>Vindur: {$weatherStation->wind_direction_asc} ({$weatherStation->wind_direction}°) {$weatherStation->wind_speed} m/s (hviður allt að {$weatherStation->wind_gust} m/s)</li></ul><h2>Umferðarupplýsingar</h2><ul><li>Umferð sl. tíu mín: {$weatherStation->traffic_last_ten}</li><li>Umferð frá miðnætti: {$weatherStation->traffic_accumulated}</li></ul>";?>
+    weatherStations.push( <?="segment_" . $weatherStation->segment_id . "_weatherstation"; ?> =
+      L.marker([<?=$weatherStation->latitude . ", " . $weatherStation->longitude;?>]).bindPopup("<h1><?=$weatherStation->name;?></h1><?=$markup;?>"));
+  <?php endforeach; ?>
+  var weatherStationsLayer = L.layerGroup(weatherStations);
 
-  <?php foreach($this->segments as $key => $segment ): ?>
-    <?php if(sizeof($segment) > 0) : ?>
-      var <?=$key;?> = [
-      <?php $counter = 1; ?>
-      <?php foreach($segment as $segm) : ?>
-        <?php if(isset($segm->pattern)) : ?>
-        {
-          "type": "LineString",
-          "coordinates" : [<?=$segm->pattern;?>]
+  var segments = [];
+  <?php foreach($this->segments as $segment) : ?>
+    var <?="butur_" . $segment->segment_id . "_array";?> = [];
+    <?php foreach($segment->segmentParts as $segmentPart) : ?>
+      <?php $segmentName = "butur_" . $segmentPart->id_butur . "_obj_" . $segmentPart->object_id . "_vegur_" . $segmentPart->nr_vegur . "_kafli_" . $segmentPart->nr_kafli; ?>
+      var <?=$segmentName; ?> = L.geoJson({
+          "type" : "LineString",
+          "coordinates" :[
+            <?=$segmentPart->pattern;?>
+          ]
         },
-        <?php endif; ?>
-      <?php endforeach; ?>
-      ];
-      var <?=$key . "_geo";?> = L.geoJson(<?=$key;?>, {style: {"color": "<?=$segm->line_color;?>"}});
-      <?php $segmentLayers[] = $key . "_geo";?>
-    <?php endif; ?>
-  <?php endforeach; ?>
-
-
-  <?php foreach($this->signs as $key => $sign) : ?>
-    <?php $markerLayers[$key . "_layer"] = $sign[0]->name; ?>
-    <?php $counter = 1; $signArrayString = ""; ?>
-    var <?=$key . "_icon"; ?> = L.icon({iconUrl: '<?="road-info/icon/" . $sign[0]->sign_url . '.gif'; ?>', iconAnchor: [16,16], popupAnchor: [0,0]});
-    <?php foreach( $sign as $sgn ) : ?>
-      var <?=$key . "_marker_" . $counter; ?> = L.marker([<?=$sgn->center_lat;?>, <?=$sgn->center_lng;?>], {icon: <?=$key . "_icon"; ?>}).bindPopup("<?=$sgn->name;?>");
-      <?php $signArrayString .= $key . "_marker_" . $counter++ . ", "; ?>
+        {style: {"color": "<?=$segment->line_color;?>"}}
+      ).bindPopup("<h1><?=$segment->name_long;?></h1><h2><?=$segment->name_short;?></h2><?=$segmentName;?><p>Ástand vegar: <?=$segment->condition_long;?>");
+      segments.push(<?=$segmentName;?>);
+      <?="butur_" . $segment->segment_id . "_array";?>.push(<?=$segmentName;?>);
     <?php endforeach; ?>
-    var <?=$key . "_layer";?> = L.layerGroup(<?= "[" . $signArrayString . "]";?>);
   <?php endforeach; ?>
+  var countryLayer = L.layerGroup(segments);
 
-  var countryLayer = L.layerGroup([<?php foreach($segmentLayers as $s){echo $s . ",";} ?>]).addTo(map);
-
-  <?php $routeArray = array(); ?>
   <?php foreach($this->routes as $route) : ?>
-    <?php $routeSegmentArray = array(); $routeSegmentPartsArray = array(); ?>
-    <?php if(is_array($route->segments)) : ?>
-      <?php foreach($route->segments as $segment) : ?>
-        <?php if(is_object($segment->segments)) : ?>
-          /** Handle weather information for the segment */
-          <?php if(sizeof($segment->weatherStations > 1)) : ?>
-            <?php $weatherArray = array(); ?>
-            <?php foreach($segment->weatherStations as $weatherStation) : ?>
-              <?php $markup = "<p><strong><em>Upplýsingar frá: " . strftime('%d.%m %Y %H:%M',$weatherStation->date) . "</em></strong></p><h2>Veðurupplýsingar</h2><ul><li>Hæð yfir sjávarmáli: {$weatherStation->height}m</li><li>Daggarmark: {$weatherStation->dew_point}°C</li><li>Loftþrýstingur: {$weatherStation->airpressure}hPA</li><li>Hitastig: {$weatherStation->temperature}°C</li><li>Veghiti: {$weatherStation->road_temperature}°C</li><li>Rakastig: {$weatherStation->humidity}%</li><li>Vindur: {$weatherStation->wind_direction_asc} ({$weatherStation->wind_direction}°) {$weatherStation->wind_speed} m/s (hviður allt að {$weatherStation->wind_gust} m/s)</li></ul><h2>Umferðarupplýsingar</h2><ul><li>Umferð sl. tíu mín: {$weatherStation->traffic_last_ten}</li><li>Umferð frá miðnætti: {$weatherStation->traffic_accumulated}</li></ul>";?>
-              var <?="butur_" . $segment->segment_id . "_weatherstation_" . $weatherStation->id; ?> =
-                L.marker([<?=$weatherStation->latitude . ", " . $weatherStation->longitude;?>]).bindPopup("<h1><?=$weatherStation->name;?></h1><?=$markup;?>" );
-              <?php $weatherArray[] = "butur_" . $segment->segment_id . "_weatherstation_" . $weatherStation->id; ?>
-            <?php endforeach; ?>
-          <?php endif; ?> /** End handling of weather information for the segment
-          /** Handle segment parts */
-          <?php foreach($segment->segments->segment_parts as $segmentPart) : ?>
-            <?php $segmentName = "butur_" . $segmentPart->id_butur . "_obj_" . $segmentPart->object_id . "_vegur_" . $segmentPart->nr_vegur . "_kafli_" . $segmentPart->nr_kafli; ?>
-            var <?=$segmentName; ?> = L.geoJson({
-              "type" : "LineString",
-              "coordinates" :[
-                <?=$segmentPart->pattern;?>
-              ]
-            },
-            {style: {"color": "<?=$segment->segments->line_color;?>"}}
-            ).bindPopup("<h1><?=$route->long_name;?></h1><h2><?=$segmentPart->nafn;?></h2><?=$segmentName;?>");
-          <?php $routeSegmentPartsArray[$segmentName] = $segmentPart->nafn; ?>
-          <?php endforeach; ?>
-          var <?="butur_" . $segment->segment_id; ?> = L.layerGroup([<?php foreach($routeSegmentPartsArray as $key => $value){echo $key . ",";} ?><?php foreach($weatherArray as $w){echo $w . ",";}?>]);
-          <?php $routeSegmentArray[] = "butur_" . $segment->segment_id; ?>
-        <?php endif; ?>
-      <?php endforeach; ?>
-      var <?="route_" . $route->short_name;?> = L.layerGroup([<?php foreach($routeSegmentArray as $value){echo $value . ",";} ?>]);
-      <?php $routeArray["route_" . $route->short_name] = $route->long_name; ?>
-    <?php endif; ?>
+    var <?="route_" . $route->short_name; ?> = [];
+    <?php $routeArr = array();?>
+    <?php foreach($route->segments as $segmentPart) : ?>
+      <?php $routeArr[] = "butur_" . $segmentPart->segment_id . "_array";?>
+    <?php endforeach; ?>
+
+    var segmparts = [];
+    <?php foreach($routeArr as $arr) : ?>
+      <?=$arr;?>.forEach(function(element,index){
+        segmparts.push(element);
+      });
+    <?php endforeach; ?>
+    <?="route_" . $route->short_name; ?> = L.layerGroup(segmparts);
   <?php endforeach; ?>
 
 
-  L.control.layers({}, {
+  L.control.layers({
+    "Venjulegt" : mainLayer,
+    "Vatnslitakort" : watercolorLayer
+  }, {
     "Allt landið" : countryLayer,
-    <?php foreach( $routeArray as $key => $value){echo "'" . $value . "':" . $key . ",";} ?>
+    "Veðurstöðvar" : weatherStationsLayer,
+    <?php foreach($routes as $route) : ?>
+      "<?=$route->long_name;?>" : <?="route_" . $route->short_name;?>,
+    <?php endforeach; ?>
   }).addTo(map);
   L.control.scale().addTo(map);
-
 
 </script>

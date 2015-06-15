@@ -110,10 +110,10 @@ class Route implements DataSourceAwareInterface{
 
       $routes = $statement->fetchAll();
 
-      foreach($routes as &$route){
+      foreach($routes as &$route) {
         $statement = $this->pdo->prepare("
-          SELECT distinct segment_id
-          FROM road_info.RoadCondition rc
+          SELECT segment_id
+          FROM road_info.RouteHasSegment rc
           WHERE route_id = :route_id
         ");
 
@@ -121,38 +121,12 @@ class Route implements DataSourceAwareInterface{
         $route->segments = $statement->fetchAll();
       }
 
-      foreach($routes as $route){
-        foreach($route ->segments as &$segment){
-          $statement = $this->pdo->prepare("
-            SELECT * FROM RoadCondition
-            WHERE forecast_date = (select max(forecast_date) FROM RoadCondition)
-            AND segment_id = :segment_id
-          ");
-
-          $statement->execute(array("segment_id" => $segment->segment_id));
-          $segment->segments = $statement->fetchObject();
-
-          $statement = $this->pdo->prepare("
-            SELECT * FROM road_info.SegmentParts
-            WHERE id_butur = :segment_id
-          ");
-
-          $statement->execute(array("segment_id" => $segment->segment_id));
-          $segment->segments->segment_parts = $statement->fetchAll();
-
-          $statement = $this->pdo->prepare("
-            SELECT * FROM WeatherStation
-            WHERE segment_id = :segment_id
-          ");
-          $statement->execute(array("segment_id" => $segment->segment_id));
-          $segment->weatherStations = $statement->fetchAll();
-        }
-
-      }
-
       return $routes;
     }
     catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
+      echo "</pre>";
       throw new Exception("Can't get conditions");
     }
   }
