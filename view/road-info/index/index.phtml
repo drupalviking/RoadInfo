@@ -24,6 +24,9 @@
   var mainLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
   var watercolorLayer = new L.StamenTileLayer("watercolor");
 
+  <?php foreach($this->signs as $sign) : ?>
+    var <?=$sign->sign_url . "_sign";?> = L.icon({iconUrl: '<?="road-info/icon/" . $sign->sign_url . '.gif'; ?>', iconAnchor: [16,16], popupAnchor: [0,0]});
+  <?php endforeach; ?>
   /**
    * Loop through the weather stations and create a dynamic variable for each and one.
    * Then add those variables into an array for later use
@@ -37,8 +40,9 @@
   var weatherStationsLayer = L.layerGroup(weatherStations);
 
   var segments = [];
+  var signs = [];
   <?php foreach($this->segments as $segment) : ?>
-    var <?="butur_" . $segment->segment_id . "_array";?> = [];
+    var <?="butur_" . $segment->segment_id;?> = [];
     <?php foreach($segment->segmentParts as $segmentPart) : ?>
       <?php $segmentName = "butur_" . $segmentPart->id_butur . "_obj_" . $segmentPart->object_id . "_vegur_" . $segmentPart->nr_vegur . "_kafli_" . $segmentPart->nr_kafli; ?>
       var <?=$segmentName; ?> = L.geoJson({
@@ -50,8 +54,13 @@
         {style: {"color": "<?=$segment->line_color;?>"}}
       ).bindPopup("<h1><?=$segment->name_long;?></h1><h2><?=$segment->name_short;?></h2><?=$segmentName;?><p>Ástand vegar: <?=$segment->condition_long;?>");
       segments.push(<?=$segmentName;?>);
-      <?="butur_" . $segment->segment_id . "_array";?>.push(<?=$segmentName;?>);
+      <?="butur_" . $segment->segment_id;?>.push(<?=$segmentName;?>);
     <?php endforeach; ?>
+    <?php if(sizeof($segment->signs) > 0) : ?>
+      <?php foreach($segment->signs as $sign) : ?>
+        var <?="skilti_" . $segment->segment_id;?> = L.marker([<?=$sign->center_lat;?>, <?=$sign->center_lng;?>], {icon: <?=$sign->sign_url . "_sign";?>}).bindPopup("<?=$sign->name;?>");
+      <?php endforeach; ?>
+    <?php endif; ?>
   <?php endforeach; ?>
   var countryLayer = L.layerGroup(segments);
 
@@ -59,7 +68,7 @@
     var <?="route_" . $route->short_name; ?> = [];
     <?php $routeArr = array();?>
     <?php foreach($route->segments as $segmentPart) : ?>
-      <?php $routeArr[] = "butur_" . $segmentPart->segment_id . "_array";?>
+      <?php $routeArr[] = "butur_" . $segmentPart->segment_id;?>
     <?php endforeach; ?>
 
     var segmparts = [];
@@ -67,6 +76,9 @@
       <?=$arr;?>.forEach(function(element,index){
         segmparts.push(element);
       });
+      if(typeof <?="skilti_" . substr($arr, 6);?> !== "undefined"){
+        segmparts.push(<?="skilti_" . substr($arr, 6);?>);
+      }
     <?php endforeach; ?>
     <?="route_" . $route->short_name; ?> = L.layerGroup(segmparts);
   <?php endforeach; ?>
