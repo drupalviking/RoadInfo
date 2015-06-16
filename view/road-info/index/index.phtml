@@ -59,10 +59,12 @@
     <?php if(sizeof($segment->signs) > 0) : ?>
       <?php foreach($segment->signs as $sign) : ?>
         var <?="skilti_" . $segment->segment_id;?> = L.marker([<?=$sign->center_lat;?>, <?=$sign->center_lng;?>], {icon: <?=$sign->sign_url . "_sign";?>}).bindPopup("<?=$sign->name;?>");
+        signs.push(<?="skilti_" . $segment->segment_id;?>);
       <?php endforeach; ?>
     <?php endif; ?>
   <?php endforeach; ?>
   var countryLayer = L.layerGroup(segments);
+  var signsLayer = L.layerGroup(signs);
 
   <?php foreach($this->routes as $route) : ?>
     var <?="route_" . $route->short_name; ?> = [];
@@ -90,6 +92,7 @@
   }, {
     "Allt landið" : countryLayer,
     "Veðurstöðvar" : weatherStationsLayer,
+    "Skilti" : signsLayer,
     <?php foreach($routes as $route) : ?>
       "<?=$route->long_name;?>" : <?="route_" . $route->short_name;?>,
     <?php endforeach; ?>
