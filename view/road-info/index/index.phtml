@@ -63,8 +63,8 @@
       <?php endforeach; ?>
     <?php endif; ?>
   <?php endforeach; ?>
-  var countryLayer = L.layerGroup(segments);
-  var signsLayer = L.layerGroup(signs);
+  var countryLayer = L.layerGroup(segments).addTo(map);
+  var signsLayer = L.layerGroup(signs).addTo(map);
 
   <?php foreach($this->routes as $route) : ?>
     var <?="route_" . $route->short_name; ?> = [];
