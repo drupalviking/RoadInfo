@@ -117,7 +117,7 @@ class RoadCondition implements DataSourceAwareInterface{
         $condition->weatherStations = $weatherStations->fetchAll();
 
         $segmentParts = $this->pdo->prepare("
-          SELECT object_id, nr_vegur, nr_kafli, nafn, id_butur, pattern
+          SELECT object_id, nr_vegur, nr_kafli, nafn, id_butur, mid_res as pattern
           FROM `road_info`.`SegmentParts`
           WHERE id_butur = :segment_id
         ");

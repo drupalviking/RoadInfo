@@ -42,6 +42,7 @@ class IndexController extends AbstractActionController
 
         $xmlStreamService->processWeatherStations();
         $xmlStreamService->processRoadConditions();
+        $xmlStreamService->readPatterns();
 
         if (($segments = $segmentService->fetchAll()) != false) {
             return new ViewModel([

@@ -25,16 +25,10 @@ class XMLStream implements DataSourceAwareInterface {
   private $pdo;
 
   public function processWeatherStations(){
-    $obj = $this->fetchWeatherStations();
+    $obj = $this->fetch(WEATHER_STATIONS);
     foreach($obj as $item){
       $this->processWeatherStationItem($item);
     }
-  }
-
-  public function fetchWeatherStations(){
-    $json = file_get_contents(WEATHER_STATIONS);
-
-    return json_decode($json);
   }
 
   public function processWeatherStationItem($item){
@@ -76,18 +70,41 @@ class XMLStream implements DataSourceAwareInterface {
   }
 
   public function processRoadConditions(){
-    $obj = $this->fetchRoadConditions();
+    $obj = $this->fetch(ROAD_CONDITIONS);
     foreach( $obj as $item ){
       $this->processRoadConditionItem($item);
     }
   }
 
-  public function fetchRoadConditions(){
-    $json = file_get_contents(ROAD_CONDITIONS);
+  /**
+   * Fetches data from paths as a JSON object, with GuzzleHttp client, and returns it as a stdClass objects
+   *
+   * @param $path
+   * @return mixed|object
+   */
+  public function fetch($path){
+    $client = new GuzzleHttp\Client();
+    $result = $client->get($path, [
+      'headers' => [
+        'Accept' => 'application/json'
+      ]
+    ]);
 
-    return json_decode($json);
+    $res = $result->getBody()->getContents();
+    $res = json_decode($res);
+    return $res;
   }
 
+  /**
+   * Process each Road condition item, in five steps
+   * 1) Looks for the segment in the database and creates if it doesn't exist
+   * 2) Looks for the condition type in the database and creates it if it doesn't exist
+   * 3) Checks if the segment is a Route, and if it is, process it
+   * 4) Checks if there is a road sign assigned to the segment, and if the road sign exists in the database.
+   *    If not, it will be created
+   * 5) Finally it stores the road condition in the database
+   * @param $item
+   */
   public function processRoadConditionItem($item){
     //First we check to see if the segment is available in the database
     $segmentService = new Segment();
@@ -224,6 +241,12 @@ class XMLStream implements DataSourceAwareInterface {
     return true;
   }
 
+  /**
+   * Reads the pattern JSON feed from Vegagerðin and processes it into the database, updating older info if exists
+   * and creates a new entry for new additions.
+   *
+   * @throws \RoadInfo\Service\Exception
+   */
   public function readPatterns(){
     $segmentPartService = new SegmentParts();
     $segmentPartService->setDataSource($this->pdo);
