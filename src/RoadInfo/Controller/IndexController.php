@@ -40,9 +40,9 @@ class IndexController extends AbstractActionController
         $signService = $sm->get('RoadInfo\Service\Sign');
         $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
 
-        $xmlStreamService->processWeatherStations();
-        $xmlStreamService->processRoadConditions();
-        $xmlStreamService->readPatterns();
+        //$xmlStreamService->processWeatherStations();
+        //$xmlStreamService->processRoadConditions();
+        //$xmlStreamService->readPatterns();
 
         if (($segments = $segmentService->fetchAll()) != false) {
             return new ViewModel([

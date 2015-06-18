@@ -103,6 +103,7 @@ class Route implements DataSourceAwareInterface{
     try{
       $statement = $this->pdo->prepare("
         SELECT * FROM Route
+        WHERE id < 800
         ORDER BY short_name ASC
       ");
 
