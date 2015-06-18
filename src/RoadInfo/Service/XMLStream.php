@@ -14,6 +14,7 @@ define("WEB_CAMERAS", "http://gagnaveita.vegagerdin.is/api/vefmyndavelar2014_1")
 define("SHAPE_GENERATOR", "http://www2.turistforeningen.no/routing.php?url=http://www.yournavigation.org/api/1.0/gosmore.php&format=geojson");
 
 use RoadInfo\Lib\DataSourceAwareInterface;
+use GuzzleHttp;
 
 class XMLStream implements DataSourceAwareInterface {
   use DatabaseService;
@@ -223,52 +224,66 @@ class XMLStream implements DataSourceAwareInterface {
     return true;
   }
 
-  public function readPatternFile(){
-    $file = simplexml_load_file('/Users/drupalviking/Desktop/snjoleidir.kml');
-    $data = array();
-    foreach($file->Document->Folder->Placemark as $pattern){
-      $object = json_decode(json_encode($pattern));
-      $data['object_id'] = $object->ExtendedData->SchemaData->SimpleData[0];
-      $data['nr_vegur'] = $object->ExtendedData->SchemaData->SimpleData[1];
-      $data['nr_kafli'] = $object->ExtendedData->SchemaData->SimpleData[2];
-      $data['nafn'] = $object->ExtendedData->SchemaData->SimpleData[3];
-      $data['id_butur'] = $object->ExtendedData->SchemaData->SimpleData[4];
-      $lineString = $object->LineString->coordinates;
+  public function readPatterns(){
+    $segmentPartService = new SegmentParts();
+    $segmentPartService->setDataSource($this->pdo);
 
-      //Take the line string and split it up into an array, one part per array item
-      $lineArray = explode(' ', $lineString);
+    $client = new GuzzleHttp\Client([
+      'base_uri' => 'http://gagnaveita.vegagerdin.is'
+    ]);
+    $result = $client->get('/gis/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=gis:snjoleidir&srsName=EPSG:4326&maxFeatures=2000&outputFormat=application/json');
+    $res = $result->getBody()->getContents();
+    $res = json_decode($res);
 
-      //Then we need to take each array item, and split that up again, into two to three
-      //pieces (the last piece might be an height attribute)
-      $pattern = "";
-      foreach($lineArray as $item) {
-        $line = explode(",", $item);
-        $pattern .= "[" . $line[0] . "," . $line[1] . "],";
+    foreach($res->features as $feature){
+      $data['object_id'] = $feature->properties->OBJECTID;
+      $data['nr_vegur'] = $feature->properties->NRVEGUR;
+      $data['nr_kafli'] = $feature->properties->NRKAFLI;
+      $data['nafn'] = $feature->properties->NAFN;
+      $data['id_butur'] = $feature->properties->IDBUTUR;
+
+      /**
+       * Generate three strings to store pattern configuration.  Low res points have three significant numbers,
+       * mid res points have five and hi res have all.
+       */
+      $lowResPoints = "";
+      $midResPoints = "";
+      $hiResPoints = "";
+      setlocale(LC_NUMERIC, 'en_US');
+      foreach($feature->geometry->coordinates as $coord){
+        $lowResPoints .= "[" . (float)round($coord[0], 3) . "," . (float)round($coord[1], 3) . "],";
+        $midResPoints .= "[" . (float)round($coord[0], 5) . "," . (float)round($coord[1], 5) . "],";
+        $hiResPoints .= "[" . $coord[0] . "," . $coord[1] . "],";
       }
-      $data['pattern'] = $pattern;
+      setlocale(LC_NUMERIC, 'is_IS');
+      $data['low_res'] = $lowResPoints;
+      $data['mid_res'] = $midResPoints;
+      $data['hi_res'] = $hiResPoints;
 
-      //We also need to find the middle point, in order to place a sign on the road,
-      //if there is one.
-      $centerOfPattern = (int)(sizeof($lineArray) / 2);
-      $centerPoint = explode(",", $lineArray[$centerOfPattern]);
-
+      $centerOfPattern = (int)(sizeof($feature->geometry->coordinates) / 2);
       //We get the segment from the database, update the data and store it back
       $segmentService = new Segment();
       $segmentService->setDataSource($this->pdo);
       $segmentFromDatabase = $segmentService->get($data["id_butur"]);
-      $segmentFromDatabase->center_lat = $centerPoint[1];
-      $segmentFromDatabase->center_lng = $centerPoint[0];
-      $segmentService->update($segmentFromDatabase->id, (array)$segmentFromDatabase);
+      $segmentFromDatabase->center_lat = $feature->geometry->coordinates[$centerOfPattern][1];
+      $segmentFromDatabase->center_lng = $feature->geometry->coordinates[$centerOfPattern][0];
+      //$segmentService->update($segmentFromDatabase->id, (array)$segmentFromDatabase);
 
+      $dataFromDatabase = $segmentPartService->getSegmentPart(
+        $data['object_id'], $data['nr_vegur'], $data['nr_kafli'], $data['id_butur']
+      );
       //Lastly we store the Segment Part in the database
       try{
-        //$insertString = $this->insertString('SegmentParts', $data);
-        //$statement = $this->pdo->prepare($insertString);
-        //$statement->execute($data);
+        if($dataFromDatabase){
+          $segmentPartService->update($data);
+        }
+        else{
+          $segmentPartService->create($data);
+        }
       }
       catch( PDOException $e){
         echo $e->getMessage();
-        throw new Exception("Can't get conditions");
+        throw new Exception("Can't insert data for Segment Pattern");
       }
     }
   }
