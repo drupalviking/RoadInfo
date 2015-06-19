@@ -5,7 +5,7 @@
  * Date: 11/05/15
  * Time: 09:38
  */
-namespace FlightInfo\Controller;
+namespace RoadInfo\Controller;
 
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -24,6 +24,12 @@ class ConsoleController extends AbstractActionController{
   public function processShapes(){
     $sm = $this->getServiceLocator();
     $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
-    $xmlStreamService->processShapes();
+    $xmlStreamService->readPatterns();
+  }
+
+  public function processWeatherStations(){
+    $sm = $this->getServiceLocator();
+    $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
+    $xmlStreamService->processWeatherStations();
   }
 }
