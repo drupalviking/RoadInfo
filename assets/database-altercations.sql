@@ -1,3 +1,4 @@
+/*
 UPDATE `road_info`.`Route` SET `short_name`='RUV_AKU_EGI' WHERE `id`='1';
 UPDATE `road_info`.`Route` SET `short_name`='RUV_AKU_OLFJ' WHERE `id`='2';
 UPDATE `road_info`.`Route` SET `short_name`='RUV_AKU_VOPN' WHERE `id`='3';
@@ -160,3 +161,47 @@ INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (20, 90203000
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (20, 902020001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (20, 902010001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (20, 903010001);
+*/
+UPDATE `road_info`.`Route` SET `long_name`='N - Akureyri - Egilsstaðir' WHERE `id`='1';
+UPDATE `road_info`.`Route` SET `long_name`='N - Akureyri-Ólafsfj/Greniv/Hrafnagil' WHERE `id`='2';
+UPDATE `road_info`.`Route` SET `long_name`='N - Akureyri - Húsavík/Kópask/Raufarh/Þórsh/Vopnafjörður' WHERE `id`='3';
+UPDATE `road_info`.`Route` SET `long_name`='N - Blönduós-Skagaströnd-Sauðárkrókur' WHERE `id`='4';
+UPDATE `road_info`.`Route` SET `long_name`='V - Borgarnes-Húsafell/Skorradalur' WHERE `id`='5';
+UPDATE `road_info`.`Route` SET `long_name`='V - Borgarnes-Snæfellsnes' WHERE `id`='6';
+UPDATE `road_info`.`Route` SET `long_name`='VF - Brjánslækur-Patrfj.-Arnarfjörður' WHERE `id`='7';
+UPDATE `road_info`.`Route` SET `long_name`='A - Egilsst-Norðfj/Seyðisfj/Mjóifj.' WHERE `id`='8';
+UPDATE `road_info`.`Route` SET `long_name`='A - Egilsst-Borgfj/Hróarst/Jökulsárhlíð' WHERE `id`='9';
+UPDATE `road_info`.`Route` SET `long_name`='Hál - Landm.laugar, Eldgjá, Skaftártungur' WHERE `id`='10';
+UPDATE `road_info`.`Route` SET `long_name`='Hál - Kjölur og Sprengisandur' WHERE `id`='11';
+UPDATE `road_info`.`Route` SET `long_name`='SV - Höfuðborgarsvæðið' WHERE `id`='12';
+UPDATE `road_info`.`Route` SET `long_name`='S - Höfn - Egilsstaðir, allar leiðir' WHERE `id`='13';
+UPDATE `road_info`.`Route` SET `long_name`='V - Hvalfjörður, Geldingadr., Hestháls' WHERE `id`='14';
+UPDATE `road_info`.`Route` SET `long_name`='VF - Króksfjnes-Reykhólar-Þingeyri' WHERE `id`='15';
+UPDATE `road_info`.`Route` SET `long_name`='V - Reykjavík - Akureyri' WHERE `id`='16';
+UPDATE `road_info`.`Route` SET `long_name`='SV - Reykjavík - Suðurnes' WHERE `id`='17';
+UPDATE `road_info`.`Route` SET `long_name`='S - Reykjavík - Höfn' WHERE `id`='18';
+UPDATE `road_info`.`Route` SET `long_name`='V - Reykjavík-Ísafjörður-Bolungavík um Þröskulda' WHERE `id`='19';
+UPDATE `road_info`.`Route` SET `long_name`='S - Gullni hringurinn' WHERE `id`='20';
+UPDATE `road_info`.`Route` SET `long_name`='VF - Þingeyri-Ísafjörður,Súgandafj.,Bolungarvík' WHERE `id`='21';
+UPDATE `road_info`.`Route` SET `long_name`='N - Varmahlíð-Siglufj,Lágheiði' WHERE `id`='23';
+
+UPDATE `road_info`.`Route` SET `short_name`='RUV_N_AKU_EGI', `long_name`='N - Akureyri - Egilsstaðir' WHERE `id`='1';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_N_AKU_OLFJ', `long_name`='N - Akureyri-Ólafsfj/Greniv/Hrafnagil' WHERE `id`='2';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_N_AKU_VOPN', `long_name`='N - Akureyri - Húsavík/Kópask/Raufarh/Þórsh/Vopnafjörður' WHERE `id`='3';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_N_BLO_SKAG', `long_name`='N - Blönduós-Skagaströnd-Sauðárkrókur' WHERE `id`='4';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_V_BORG_HUS', `long_name`='V - Borgarnes-Húsafell/Skorradalur' WHERE `id`='5';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_V_BORG_SFN', `long_name`='V - Borgarnes-Snæfellsnes' WHERE `id`='6';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_A_EGI_FIRD' WHERE `id`='8';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_A_EGI_HROA' WHERE `id`='9';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_S_HFN_EGI' WHERE `id`='13';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_SV_HBORGARSV' WHERE `id`='12';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_V_HVALFJRD' WHERE `id`='14';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_VF_KRO_TING' WHERE `id`='15';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_V_REY_AKU' WHERE `id`='16';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_SV_REY_SNES' WHERE `id`='17';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_S_REY_HFN' WHERE `id`='18';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_V_REY_ISA_THROSK' WHERE `id`='19';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_S_GULLNI' WHERE `id`='20';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_VF_TING_SUG' WHERE `id`='21';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_N_VARM_SIG' WHERE `id`='23';
+UPDATE `road_info`.`Route` SET `short_name`='RUV_VF_BRJ_ARNF' WHERE `id`='7';
