@@ -132,8 +132,37 @@ return array(
             __DIR__ . '/../view',
         ),
     ),
-    // Placeholder for console routes
-    'console' => array(
-        'router' => array(),
+  'console' => array(
+    'router' => array(
+      'routes' => array(
+        'process-road-conditions' => array(
+          'options' => array(
+            'route'    => 'process road conditions',
+            'defaults' => array(
+              'controller' => 'RoadInfo\Controller\Console',
+              'action'     => 'processRoadConditionStreamAction'
+            )
+          )
+        ),
+        'process-shapes' => array(
+          'options' => array(
+            'route'    => 'process route shapes',
+            'defaults' => array(
+              'controller' => 'RoadInfo\Controller\Console',
+              'action'     => 'processShapes'
+            )
+          )
+        ),
+        'process-weather-stations' => array(
+          'options' => array(
+            'route'    => 'process weather stations',
+            'defaults' => array(
+              'controller' => 'RoadInfo\Controller\Console',
+              'action'     => 'processWeatherStations'
+            )
+          )
+        ),
+      ),
     ),
+  ),
 );
