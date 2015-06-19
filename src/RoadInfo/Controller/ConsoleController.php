@@ -21,13 +21,13 @@ class ConsoleController extends AbstractActionController{
     $xmlStreamService->processRoadConditions();
   }
 
-  public function processShapes(){
+  public function processShapesAction(){
     $sm = $this->getServiceLocator();
     $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
     $xmlStreamService->readPatterns();
   }
 
-  public function processWeatherStations(){
+  public function processWeatherStationsAction(){
     $sm = $this->getServiceLocator();
     $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
     $xmlStreamService->processWeatherStations();
