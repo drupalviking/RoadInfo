@@ -163,8 +163,10 @@ class XMLStream implements DataSourceAwareInterface {
       $routeSegment = $routeSegmentService->getRouteSegment($route, $segment);
 
       if(!$routeSegment){
-        $data['route_id'] = $route;
-        $data['segment_id'] = $segment;
+        $data = array(
+          'route_id' => $route,
+          'segment_id' => $segment
+        );
         $routeSegmentService->create($data);
       }
     }

@@ -109,7 +109,7 @@ class RouteSegment implements DataSourceAwareInterface{
   }
 
   /**
-   * Creates a Weather station entry in the database
+   * Creates a Route has Segment entry in the database
    *
    * @param array $data
    * @return int
@@ -127,12 +127,12 @@ class RouteSegment implements DataSourceAwareInterface{
       echo "<pre>";
       print_r($e->getMessage());
       echo "</pre>";
-      throw new Exception("Can't create Weather station entry");
+      throw new Exception("Can't create Route has Segment station entry");
     }
   }
 
   /**
-   * Updates a Weather station entry in the database
+   * Updates a Route has Segment station entry in the database
    *
    * @param $id
    * @param array $data
@@ -150,7 +150,7 @@ class RouteSegment implements DataSourceAwareInterface{
       echo "<pre>";
       print_r($e->getMessage());
       echo "</pre>";
-      throw new Exception("Can't update Weather station entry with id [{$id}]");
+      throw new Exception("Can't update Route has Segment station entry with id [{$id}]");
     }
   }
 

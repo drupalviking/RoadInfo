@@ -41,6 +41,7 @@ WHERE route_id = 2 AND segment_id = 909080001;
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 909040001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 910240001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 910420001);
+INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 910430001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 910220001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 910430001);
 INSERT INTO road_info.RouteHasSegment(route_id, segment_id) VALUES (3, 910410001);
