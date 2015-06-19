@@ -140,7 +140,7 @@ return array(
             'route'    => 'process road conditions',
             'defaults' => array(
               'controller' => 'RoadInfo\Controller\Console',
-              'action'     => 'processRoadConditionStreamAction'
+              'action'     => 'process-road-condition-stream'
             )
           )
         ),
@@ -149,7 +149,7 @@ return array(
             'route'    => 'process route shapes',
             'defaults' => array(
               'controller' => 'RoadInfo\Controller\Console',
-              'action'     => 'processShapes'
+              'action'     => 'process-shapes'
             )
           )
         ),
@@ -158,7 +158,7 @@ return array(
             'route'    => 'process weather stations',
             'defaults' => array(
               'controller' => 'RoadInfo\Controller\Console',
-              'action'     => 'processWeatherStations'
+              'action'     => 'process-weather-stations'
             )
           )
         ),
