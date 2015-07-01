@@ -215,35 +215,6 @@ class XMLStream implements DataSourceAwareInterface {
   }
 
   /**
-   * Checks to see if we have a shape for certain road segment.  If not, it sends an API request
-   * to the Norveigian Web service and stores the results in the database
-   *
-   * @return true
-   */
-  public function processShapes(){
-    //&v=foot&fast=1&layer=mapnik&flat=61.494951802903145&flon=8.810966491699235&tlat=61.486414253053795&tlon=8.830604553222656
-    $segmentService = new Segment();
-    $segmentService->setDataSource($this->pdo);
-    $segments = $segmentService->fetchAll();
-    foreach($segments as $segment){
-      if(isset($segment->start_lat)){
-        if(!isset($segment->path_data)){
-          $string = SHAPE_GENERATOR . "&v=foot&fast=1&layer=mapnik&flat=" . $segment->start_lat .
-            "&flon=" . $segment->start_lng .
-            "&tlat=" . $segment->end_lat .
-            "&tlon=" . $segment->end_lng;
-            $json = file_get_contents($string);
-            $segment->path_data = $json;
-
-            $segmentService->update($segment->id, (array)$segment);
-        }
-      }
-    }
-
-    return true;
-  }
-
-  /**
    * Reads the pattern JSON feed from Vegagerðin and processes it into the database, updating older info if exists
    * and creates a new entry for new additions.
    *
@@ -286,6 +257,9 @@ class XMLStream implements DataSourceAwareInterface {
       $data['hi_res'] = $hiResPoints;
 
       $centerOfPattern = (int)(sizeof($feature->geometry->coordinates) / 2);
+      if(is_null($centerOfPattern)){
+        $a = 10;
+      }
       //We get the segment from the database, update the data and store it back
       $segmentService = new Segment();
       $segmentService->setDataSource($this->pdo);
