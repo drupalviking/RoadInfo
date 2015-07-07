@@ -18,6 +18,8 @@ class ConsoleController extends AbstractActionController{
   public function processRoadConditionStreamAction(){
     $sm = $this->getServiceLocator();
     $xmlStreamService = $sm->get('RoadInfo\Service\XMLStream');
+    $roadConditionService = $sm->get('RoadInfo\Service\RoadCondition');
+    $roadConditionService->truncateData();
     $xmlStreamService->processRoadConditions();
   }
 

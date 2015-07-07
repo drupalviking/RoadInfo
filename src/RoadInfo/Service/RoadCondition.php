@@ -202,6 +202,29 @@ class RoadCondition implements DataSourceAwareInterface{
   }
 
   /**
+   * Clears the data for Road Conditions
+   *
+   * @return bool
+   */
+  public function truncateData(){
+    try{
+      $statement = $this->pdo->prepare("
+        TRUNCATE RoadCondition
+      ");
+
+      $statement->execute();
+
+      return true;
+    }
+    catch( PDOException $e){
+      echo "<pre>";
+      print_r($e->getMessage());
+      echo "</pre>";
+      throw new Exception("Can't truncate Road conditions");
+    }
+  }
+
+  /**
    * Sets the Datasource
    *
    * @param \PDO $pdo

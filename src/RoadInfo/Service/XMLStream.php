@@ -197,21 +197,17 @@ class XMLStream implements DataSourceAwareInterface {
     $roadConditionService = new RoadCondition();
     $roadConditionService->setDataSource($this->pdo);
 
-    $dataFromDatabase = $roadConditionService->getBySegmentAndForcastDate($segment, strtotime($item->DagsKeyrtUt));
-
-    if(!$dataFromDatabase){
-      $data = array(
-        'segment_id' => $segment,
-        'forecast_date' => strtotime($item->DagsKeyrtUt),
-        'comment' => $item->Aths,
-        'road_condition_id' => $condition,
-        'route_id' => ($route) ? $route : null,
-        'sort_order' => $item->Rodun,
-        'sign_id' => ($sign) ? $sign : null,
-        'line_color' => (isset($item->Linulitur)) ? $item->Linulitur : "#000000"
-      );
-      $roadConditionService->create($data);
-    }
+    $data = array(
+      'segment_id' => $segment,
+      'forecast_date' => strtotime($item->DagsKeyrtUt),
+      'comment' => $item->Aths,
+      'road_condition_id' => $condition,
+      'route_id' => ($route) ? $route : null,
+      'sort_order' => $item->Rodun,
+      'sign_id' => ($sign) ? $sign : null,
+      'line_color' => (isset($item->Linulitur)) ? $item->Linulitur : "#000000"
+    );
+    $roadConditionService->create($data);
   }
 
   /**
